@@ -1,1 +1,112 @@
+# ===========================
+# User-specific files
+# ===========================
 .vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# ===========================
+# Build results
+# ===========================
+[Bb]in/
+[Oo]bj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.ilk
+*.iobj
+*.ipdb
+*.tlog
+*.sdf
+*.sbr
+*.bsc
+
+# ===========================
+# Test results
+# ===========================
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+*.codecoverage
+
+# ===========================
+# NuGet packages
+# ===========================
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ===========================
+# Microsoft Azure Web Apps
+# ===========================
+.csx/
+*.publishsettings
+node_modules/
+
+# ===========================
+# ASP.NET / Web Projects
+# ===========================
+wwwroot/lib/
+bower_components/
+dist/
+bundle.js
+*.map
+
+# ===========================
+# Xamarin / Mobile Projects
+# ===========================
+*.apk
+*.ap_ 
+*.aab
+*.ipa
+*.xarchive
+*.xcuserstate
+*.xcworkspace
+
+# ===========================
+# Rider / ReSharper
+# ===========================
+.idea/
+_ReSharper*/
+*.DotSettings
+
+# ===========================
+# Visual Studio Code
+# ===========================
+.vscode/
+
+# ===========================
+# SQL Server / LocalDB
+# ===========================
+*.mdf
+*.ldf
+*.sql
+*.dbmdl
+
+# ===========================
+# Temporary files
+# ===========================
+*.tmp
+*.temp
+*.~*
+*.bak
+*.swp
+*.scc
+
+# ===========================
+# Others
+# ===========================
+*.db
+*.opendb
+*.idb
+*.log
