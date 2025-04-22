@@ -38,4 +38,4 @@ public:
     virtual std::string getDescription() const;
 };
 
-#endif // BUILDING_H
+#endif
