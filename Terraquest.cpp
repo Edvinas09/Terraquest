@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
+
 int main() {
     sf::RenderWindow window(sf::VideoMode({ 640, 480 }), "First window");
     window.setFramerateLimit(60);

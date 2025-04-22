@@ -110,3 +110,4 @@ _ReSharper*/
 *.opendb
 *.idb
 *.log
+Test.cpp

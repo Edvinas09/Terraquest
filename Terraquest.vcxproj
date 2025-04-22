@@ -161,8 +161,11 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Terraquest.cpp" />
+    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="Troop.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameEntities.hpp" />
     <ClInclude Include="imgui\imconfig-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui-SFML.h" />
