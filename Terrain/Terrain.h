@@ -2,9 +2,10 @@
 #define TERRAIN_H
 
 #include <vector>
+#include <string>
 
 //---NameSpace for Terrain---//
-namespace TerrainNamespace{
+namespace TerrainNamespace {
     //--Terrain class--//
     class Terrain
     {
@@ -23,17 +24,28 @@ namespace TerrainNamespace{
         Terrain(int height, int width, int seed);
 
         //---Destructor---//
-        ~Terrain();
 
         //---Methods---//
         //--Create() to creates a new terrain map--//
         //--Clear() to clear the terrain map--//
         //--Update() to update the terrain maps seed--// 
         void create(int width, int height, int seed);
+        void destroy();
         void clear();
         void update(int seed);
-        int getHeight() const;
-        int getWidth() const;
+
+        int getHeight();
+        int getWidth();
+        int getSeed();
+        const std::vector<std::vector<int>> getGrid();
+
+        void setSeed(int seed);
+        void setHeight(int height);
+        void setWidth(int width);
+        void setGrid(const std::vector<std::vector<int>> grid);
+
+        void generateTerrain();
+        std::string toString();
     };
 }
 #endif // TERRAIN_H
