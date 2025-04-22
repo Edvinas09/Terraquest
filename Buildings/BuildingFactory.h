@@ -14,4 +14,4 @@ public:
     static std::unique_ptr<Building> createBuilding(std::string type, Player* owner, Tile* location);
 };
 
-#endif // BUILDINGFACTORY_H
+#endif
