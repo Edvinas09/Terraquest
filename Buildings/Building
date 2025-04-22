@@ -1,0 +1,52 @@
+#include <string>
+#include <vector>
+#include <memory>
+
+// Base Building class that all specific buildings will inherit from
+class Building {
+protected:
+    int healthPoints;
+    int buildCost;
+    int maintenanceCost;
+    std::string name;
+    Player* owner;
+    Tile* location;
+    bool isDestroyed;
+
+public:
+    Building(int hp, int bCost, int mCost, std::string buildingName, Player* buildingOwner, Tile* buildingLocation)
+        : healthPoints(hp), buildCost(bCost), maintenanceCost(mCost), 
+          name(buildingName), owner(buildingOwner), location(buildingLocation), isDestroyed(false) {}
+    
+    virtual ~Building() {}
+    
+    // Getters
+    int getHealth() const { return healthPoints; }
+    int getBuildCost() const { return buildCost; }
+    int getMaintenanceCost() const { return maintenanceCost; }
+    std::string getName() const { return name; }
+    Player* getOwner() const { return owner; }
+    Tile* getLocation() const { return location; }
+    bool getIsDestroyed() const { return isDestroyed; }
+    
+    // Common methods
+    virtual void takeDamage(int damage) {
+        healthPoints -= damage;
+        if (healthPoints <= 0) {
+            isDestroyed = true;
+            healthPoints = 0;
+        }
+    }
+    
+    virtual void repair(int amount) {
+        if (!isDestroyed) {
+            healthPoints += amount;
+        }
+    }
+    
+    virtual void update(int turn) = 0;  // Abstract method to be implemented by derived classes
+    
+    virtual std::string getDescription() const {
+        return name + " (HP: " + std::to_string(healthPoints) + ")";
+    }
+};
