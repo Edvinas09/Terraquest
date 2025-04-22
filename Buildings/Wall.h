@@ -20,4 +20,4 @@ public:
     std::string getDescription() const override;
 };
 
-#endif // WALL_H
+#endif
