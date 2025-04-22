@@ -26,4 +26,4 @@ public:
     std::string getDescription() const override;
 };
 
-#endif // MAINBASE_H
+#endif
