@@ -1,0 +1,37 @@
+#include <string>
+#include <vector>
+#include <memory>
+
+// Wall class - defensive structure
+class Wall : public Building {
+private:
+    int defenseBonus;
+    int level;
+    
+public:
+    Wall(Player* owner, Tile* location, int level = 1)
+        : Building(30 * level, 10 * level, 1, "Wall", owner, location),
+          defenseBonus(5 * level), level(level) {}
+    
+    int getDefenseBonus() const { return defenseBonus; }
+    int getLevel() const { return level; }
+    
+    void upgrade() {
+        level++;
+        defenseBonus = 5 * level;
+        healthPoints = 30 * level;
+        maintenanceCost = level;
+    }
+    
+    void update(int turn) override {
+        // Walls could slowly regenerate health over time
+        if (healthPoints < 30 * level && !isDestroyed) {
+            repair(1);
+        }
+    }
+    
+    std::string getDescription() const override {
+        return Building::getDescription() + " - Level " + std::to_string(level) + 
+               ", Defense Bonus: " + std::to_string(defenseBonus);
+    }
+};
