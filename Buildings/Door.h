@@ -22,4 +22,4 @@ public:
     std::string getDescription() const override;
 };
 
-#endif // DOOR_H
+#endif
