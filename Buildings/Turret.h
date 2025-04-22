@@ -30,4 +30,4 @@ public:
     std::string getDescription() const override;
 };
 
-#endif // TURRET_H
+#endif
