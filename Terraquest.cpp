@@ -5,7 +5,7 @@
 #include <SFML/Window.hpp>
 
 
-int main() {
+int main2() {
     sf::RenderWindow window(sf::VideoMode({ 640, 480 }), "First window");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);

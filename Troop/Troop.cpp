@@ -1,8 +1,8 @@
-#include "GameEntities.hpp"
+#include "../GameEntities.hpp"
+
 
 #include <memory>
 #include <stdexcept>
-#include <iostream> // Added for std::cout
 
 using namespace GameEntities;
 

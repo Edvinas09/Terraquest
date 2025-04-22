@@ -162,7 +162,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Terraquest.cpp" />
     <ClCompile Include="Test.cpp" />
-    <ClCompile Include="Troop.cpp" />
+    <ClCompile Include="Troop\Troop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameEntities.hpp" />
