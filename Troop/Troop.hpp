@@ -2,7 +2,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <sstream>
 
-namespace GameEntities {
+namespace TroopEntities {
 
 	enum class TroopType {
 		Melee,
@@ -101,5 +101,8 @@ namespace GameEntities {
 			return oss.str();
 		}
 	};
+
+
+	
 
 }

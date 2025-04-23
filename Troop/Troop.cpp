@@ -4,7 +4,7 @@
 #include <memory>
 #include <stdexcept>
 
-using namespace GameEntities;
+using namespace TroopEntities;
 
 std::unique_ptr<Troop> TroopCreator::createTroop(TroopType type, const sf::Vector2f& spawnPosition) {
    switch (type) {
