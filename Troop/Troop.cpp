@@ -1,4 +1,4 @@
-#include "../GameEntities.hpp"
+#include "Troop.hpp"
 
 
 #include <memory>
