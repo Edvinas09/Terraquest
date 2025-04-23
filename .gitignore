@@ -13,8 +13,8 @@
 # ===========================
 [Bb]in/
 [Oo]bj/
-*.exe
-*.dll
+#*.exe
+#*.dll
 *.pdb
 *.cache
 *.log
