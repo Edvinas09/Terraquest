@@ -1,6 +1,11 @@
 #include "Terrain.h"
 #include <sstream>
+#include <iostream>
 #include "FastNoiseLite.h"
+#include "imgui.h"
+#include "imgui-SFML.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 using namespace TerrainNamespace;
 
@@ -8,16 +13,16 @@ using namespace TerrainNamespace;
 Terrain::Terrain(int height, int width, int seed) : height(height), width(width), seed(seed)
 {
     create(width, height, seed);
+    this->tile_size = 5.0;
+
 }
 //---Destructor---//
 //---CRUD---//
 void Terrain::create(int width, int height, int seed)
 {
-    this->width = width;
-    this->height = height;
-    this->seed = seed;
     grid.resize(height, std::vector<int>(width, 0));
     generateTerrain();
+    loadTextures();
 }
 void Terrain::destroy()
 {
@@ -30,6 +35,39 @@ void Terrain::update(int seed)
 {
     this->seed = seed;
 }
+void Terrain::loadTextures() {
+    std::vector<std::string> files = { "Terrain/Textures/Water.png", "Terrain/Textures/Dirt.png",
+                                       "Terrain/Textures/Hill.png", "Terrain/Textures/Mountain.png" };
+    for (std::string file : files) {
+        sf::Texture texture;
+        if (!texture.loadFromFile(file)) {
+            std::exit(1);
+        }
+        textures.push_back(texture);
+    }
+}
+void Terrain::draw(sf::RenderWindow& window, sf::Vector2<int> camera) {
+    sf::Vector2<unsigned int> dimensions = window.getSize();
+    float window_width = dimensions.x;
+    float window_height = dimensions.y;
+    float tile = (1920 / window_width) * this->tile_size;
+    float scale = tile / 500.0f;
+     for (int x = camera.x; (x-1 - camera.x < (window_width / tile)) && (grid.size()-1 > x); x++) {
+         for (int y = camera.y; (y-1 - camera.y < (window_height / tile)) && (grid[x].size()-1 > y); y++) {
+             try {
+                 sf::Sprite sprite(textures[grid[x][y]]);
+                 sprite.setScale({ scale, scale });
+                 sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
+                 sprite.setPosition(size);
+                 window.draw(sprite);
+             }
+             catch (...) {
+
+             }
+         }
+     }
+}
+
 std::string Terrain::toString()
 {
     std::stringstream oss;
@@ -42,14 +80,14 @@ void Terrain::generateTerrain()
 {
     FastNoiseLite noise;
     noise.SetSeed(seed);
-    noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-    noise.SetFrequency(0.1f);
+    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noise.SetFrequency(0.04f);
     for (int y = 0; y < height; ++y)
     {
         for (int x = 0; x < width; ++x)
         {
             float value = noise.GetNoise((float)x, (float)y);
-            grid[y][x] = static_cast<int>((value + 1.0f) * 2.5f); // Normalize to 0-5
+            grid[y][x] = static_cast<int>((value + 1.0f) * 2.0f); // Normalize to 0-5
         }
     }
 }
@@ -65,6 +103,10 @@ int Terrain::getWidth()
 int Terrain::getSeed()
 {
     return seed;
+}
+float Terrain::getTileSize() 
+{
+    return tile_size;
 }
 const std::vector<std::vector<int>> Terrain::getGrid()
 {
@@ -86,4 +128,7 @@ void Terrain::setSeed(int seed)
 void Terrain::setGrid(std::vector<std::vector<int>> grid)
 {
     this->grid = grid;
+}
+void Terrain::setTileSize(float size) {
+    this->tile_size = size;
 }

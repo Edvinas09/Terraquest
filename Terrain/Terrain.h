@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <string>
+#include "imgui.h"
+#include "imgui-SFML.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 //---NameSpace for Terrain---//
 namespace TerrainNamespace {
@@ -17,6 +21,8 @@ namespace TerrainNamespace {
         int height;
         int width;
         int seed;
+        float tile_size;
+        std::vector<sf::Texture> textures;
         std::vector<std::vector<int>> grid;
 
     public:
@@ -29,23 +35,29 @@ namespace TerrainNamespace {
         //--Create() to creates a new terrain map--//
         //--Clear() to clear the terrain map--//
         //--Update() to update the terrain maps seed--// 
-        void create(int width, int height, int seed);
         void destroy();
         void clear();
         void update(int seed);
+        void draw(sf::RenderWindow&, sf::Vector2<int>);
 
         int getHeight();
         int getWidth();
         int getSeed();
+        float getTileSize();
         const std::vector<std::vector<int>> getGrid();
 
         void setSeed(int seed);
         void setHeight(int height);
         void setWidth(int width);
+        void setTileSize(float size);
         void setGrid(const std::vector<std::vector<int>> grid);
 
-        void generateTerrain();
         std::string toString();
+
+    private:
+        void create(int width, int height, int seed);
+        void loadTextures();
+        void generateTerrain();
     };
 }
 #endif // TERRAIN_H

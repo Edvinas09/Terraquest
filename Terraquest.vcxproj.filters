@@ -33,10 +33,10 @@
     <ClCompile Include="imgui\imgui-SFML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Test.cpp">
+    <ClCompile Include="Troop\Troop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Troop\Troop.cpp">
+    <ClCompile Include="Terrain\Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain\Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain\FastNoiseLite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
