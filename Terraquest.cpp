@@ -21,7 +21,9 @@ int main() {
     ImGui::SFML::Update(window, deltaClock.restart());
 
     //Camera
-    sf::Vector2<int> camera = { 0, 0 };
+    sf::Vector2<float> camera = { 0, 0 };
+    bool up = false, down = false, left = false, right = false;
+    float xMovement = 0.0, yMovement = 0.0;
 
     //Terrain
     TerrainNamespace::Terrain terrain(200, 200, 2);
@@ -41,25 +43,28 @@ int main() {
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (keyPressed->scancode == sf::Keyboard::Scancode::W){
-                    if (camera.y > 0) {
-                        camera.y -= 1;
-                    }
+                if (keyPressed->scancode == sf::Keyboard::Scancode::W)
+                    up = true;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::S)
+                    down = true;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::D)
+                    right = true;
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::A)
+                    left = true;
+            }
+            else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
+            {
+                if (keyReleased->scancode == sf::Keyboard::Scancode::W) {
+                    up = false;
                 }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::S) {
-                    if (camera.y < terrain.getHeight()) {
-                        camera.y += 1;
-                    }
+                else if (keyReleased->scancode == sf::Keyboard::Scancode::S) {
+                    down = false;
                 }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::D) {
-                    if (camera.x < terrain.getWidth()) {
-                        camera.x += 1;
-                    }
+                else if (keyReleased->scancode == sf::Keyboard::Scancode::D) {
+                    right = false;
                 }
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::A) {
-                    if (camera.x > 0) {
-                        camera.x -= 1;
-                    }
+                else if (keyReleased->scancode == sf::Keyboard::Scancode::A) {
+                    left = false;
                 }
             }
             else if (const auto* mouse = event->getIf<sf::Event::MouseWheelScrolled>()) {
@@ -67,7 +72,57 @@ int main() {
                 terrain.setTileSize(terrain.getTileSize() + delta);
             }
         }
-   
+        
+        //Camera position update
+        if (up) {
+            if (yMovement > -0.5)
+                yMovement -= 0.05;
+            else
+                yMovement = -0.5;
+        }
+        if (down) {
+            if (yMovement < 0.5)
+                yMovement += 0.05;
+            else
+                yMovement = 0.5;
+        }
+        if (right) {
+            if (xMovement < 0.5)
+                xMovement += 0.05;
+            else
+                xMovement = 0.5;
+        }
+        if (left) {
+            if (xMovement > -0.5)
+                xMovement -= 0.05;
+            else
+                xMovement = -0.5;
+        }
+
+        if (!(up || down)) {
+            if (yMovement > 0.05)
+                yMovement -= 0.05;
+            else if (yMovement < -0.05)
+                yMovement += 0.05;
+            else {
+                yMovement = 0;
+            }
+        }
+        if (!(right || left)) {
+            if (xMovement > 0.05)
+                xMovement -= 0.05;
+            else if (xMovement < -0.05)
+                xMovement += 0.05;
+            else {
+                xMovement = 0;
+            }
+        }
+        camera.x += xMovement;
+        camera.y += yMovement;
+        if (camera.x <= 0.0) camera.x = 0.0, xMovement = 0.0;
+        if (camera.y <= 0.0) camera.y = 0.0, yMovement = 0.0;
+
+
         while (accumulator >= deltaTime) {
 			//Update your game logic here, updates vyks reciau negu frames, dabar 20/sec
 
@@ -76,7 +131,7 @@ int main() {
 
         //Update graphics
         float fps = (currentTime > 0) ? 1.0f / currentTime : 0.0f;
-        std::cout << "FPS: " << fps << std::endl;
+        //std::cout << "FPS: " << fps << std::endl;
         
         //Terrain
         terrain.draw(window, camera);

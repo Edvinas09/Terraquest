@@ -46,14 +46,14 @@ void Terrain::loadTextures() {
         textures.push_back(texture);
     }
 }
-void Terrain::draw(sf::RenderWindow& window, sf::Vector2<int> camera) {
+void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera) {
     sf::Vector2<unsigned int> dimensions = window.getSize();
     float window_width = dimensions.x;
     float window_height = dimensions.y;
     float tile = (1920 / window_width) * this->tile_size;
     float scale = tile / 500.0f;
-     for (int x = camera.x; (x-1 - camera.x < (window_width / tile)) && (grid.size()-1 > x); x++) {
-         for (int y = camera.y; (y-1 - camera.y < (window_height / tile)) && (grid[x].size()-1 > y); y++) {
+     for (int x = (int)camera.x; (x-1 - (int)camera.x < (window_width / tile)) && (grid.size()-1 > x); x+=1.0) {
+         for (int y = (int)camera.y; (y-1 - (int)camera.y < (window_height / tile)) && (grid[x].size()-1 > y); y+=1.0) {
              try {
                  sf::Sprite sprite(textures[grid[x][y]]);
                  sprite.setScale({ scale, scale });
