@@ -46,7 +46,7 @@ void Terrain::loadTextures() {
         textures.push_back(texture);
     }
 }
-void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera) {
+void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera, int highlightedTileX, int highlightedTileY) {
     sf::Vector2<unsigned int> dimensions = window.getSize();
     float window_width = dimensions.x;
     float window_height = dimensions.y;
@@ -60,6 +60,16 @@ void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera) {
                  sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
                  sprite.setPosition(size);
                  window.draw(sprite);
+                 if (x == highlightedTileX && y == highlightedTileY)
+                 {
+					 float outlineThickness = 3.0f;
+					 sf::RectangleShape outline(sf::Vector2f(tile, tile));
+                     outline.setPosition({ size.x - outlineThickness, size.y - outlineThickness });
+					 outline.setFillColor(sf::Color(0, 0, 0, 0));
+					 outline.setOutlineThickness(outlineThickness);
+					 outline.setOutlineColor(sf::Color(255, 255, 255, 100));
+					 window.draw(outline);
+                 }
              }
              catch (...) {
 

@@ -38,7 +38,7 @@ namespace TerrainNamespace {
         void destroy();
         void clear();
         void update(int seed);
-        void draw(sf::RenderWindow&, sf::Vector2<float>);
+        void draw(sf::RenderWindow&, sf::Vector2<float>, int highlightedTileX, int highlightedTileY);
 
         int getHeight();
         int getWidth();

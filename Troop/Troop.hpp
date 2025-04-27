@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <sstream>
 
 namespace TroopEntities {
@@ -17,6 +19,8 @@ namespace TroopEntities {
 		int damage;
 		int speed;
 		sf::Vector2f position;
+		int gridX, gridY;
+
 
 	public:
 		Troop(int health, int damage, int speed, const sf::Vector2f& position)
@@ -28,11 +32,26 @@ namespace TroopEntities {
 		int getDamage() const { return damage; }
 		int getSpeed() const { return speed; }
 		sf::Vector2f getPosition() const { return position; }
+		int getGridX() const { return gridX; }
+		int getGridY() const { return gridY; }
 
+		sf::Vector2f getWorldPosition(float tileSize) const {
+			return sf::Vector2f(
+				gridX * tileSize + tileSize / 2.0f,
+				gridY * tileSize + tileSize / 2.0f
+			);
+		}
+
+		void setGridCoordinates(int x, int y) {
+			gridX = x;
+			gridY = y;
+		}
 		void setHealth(int newHealth) { health = newHealth; }
 		void setDamage(int newDamage) { damage = newDamage; }
 		void setSpeed(int newSpeed) { speed = newSpeed; }
 		void setPosition(const sf::Vector2f& newPosition) { position = newPosition; }
+
+		void draw(sf::RenderWindow& window, const sf::Vector2f& position);
 
 		virtual std::string toString() const {
 			std::ostringstream oss;

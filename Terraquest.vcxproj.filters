@@ -74,5 +74,8 @@
     <ClInclude Include="Terrain\FastNoiseLite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

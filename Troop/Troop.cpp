@@ -1,5 +1,7 @@
 #include "Troop.hpp"
 
+#include <SFML/Graphics.hpp>
+
 
 #include <memory>
 #include <stdexcept>
@@ -22,8 +24,12 @@ std::unique_ptr<Troop> TroopCreator::createTroop(TroopType type, const sf::Vecto
 }
 
 
-//spawn Troop
-//update troop
-//draw troop
 
-
+void Troop::draw(sf::RenderWindow& window, const sf::Vector2f& position)  
+{  
+   sf::RectangleShape shape;
+   shape.setPosition(position);  
+   shape.setSize(sf::Vector2f(5, 5));
+   shape.setFillColor(sf::Color::Red);  
+   window.draw(shape);  
+}
