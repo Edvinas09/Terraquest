@@ -20,11 +20,11 @@ namespace TroopEntities {
 		int speed;
 		sf::Vector2f position;
 		int gridX, gridY;
-
+		bool followingCursor;
 
 	public:
 		Troop(int health, int damage, int speed, const sf::Vector2f& position)
-			: health(health), damage(damage), speed(speed), position(position) {
+			: health(health), damage(damage), speed(speed), position(position), followingCursor(false) {
 		}
 		virtual ~Troop() = default;
 
@@ -34,6 +34,8 @@ namespace TroopEntities {
 		sf::Vector2f getPosition() const { return position; }
 		int getGridX() const { return gridX; }
 		int getGridY() const { return gridY; }
+		bool isFollowingCursor() const { return followingCursor; }
+		void setFollowingCursor(bool follow) { followingCursor = follow; }
 
 		sf::Vector2f getWorldPosition(float tileSize) const {
 			return sf::Vector2f(
