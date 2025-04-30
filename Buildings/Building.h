@@ -2,6 +2,7 @@
 #define BUILDING_H
 
 #include <string>
+#include <SFML/Graphics.hpp>
 
 // Forward declarations
 class Player;
@@ -36,6 +37,7 @@ public:
     virtual void repair(int amount);
     virtual void update(int turn) = 0;  // Abstract method to be implemented by derived classes
     virtual std::string getDescription() const;
+    virtual void draw(sf::RenderWindow& window, const sf::Vector2f& position);
 };
 
 #endif

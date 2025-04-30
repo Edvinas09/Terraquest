@@ -4,6 +4,7 @@
 #include "Building.h"
 #include <vector>
 #include <string>
+#include <SFML/Graphics.hpp>
 
 // MainBase class - central building for each player
 class MainBase : public Building {
@@ -24,6 +25,7 @@ public:
     
     void update(int turn) override;
     std::string getDescription() const override;
+    void draw(sf::RenderWindow& window, const sf::Vector2f& position) override;
 };
 
 #endif

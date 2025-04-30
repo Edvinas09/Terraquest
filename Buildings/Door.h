@@ -20,6 +20,7 @@ public:
     
     void update(int turn) override;
     std::string getDescription() const override;
+    void draw(sf::RenderWindow& window, const sf::Vector2f& position) override;
 };
 
 #endif
