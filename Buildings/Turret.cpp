@@ -1,13 +1,18 @@
 #include "Turret.h"
 #include <SFML/Graphics.hpp>
 
-Turret::Turret(Player* owner, Tile* location)
+Turret::Turret(Player* owner, Tile* location) {
     : Building(150, 100, 10, "Turret", owner, location), attackDamage(50), attackRange(5), attacksPerTurn(2), attacksRemaining(2), automated(true) {}
+    // Set the color to red for Turret
+    setBuildingColor(sf::Color::Blue);
+}
 
 void Turret::draw(sf::RenderWindow& window, const sf::Vector2f& position) {
-    sf::CircleShape shape(6);
+    sf::RectangleShape shape;
     shape.setPosition(position);
-    shape.setFillColor(sf::Color::Red);
+    shape.setSize(sf::Vector2f(14, 14));
+    shape.setFillColor(getBuildingColor());
+	shape.setOrigin(7, 7); // Center the shape for better placement
     window.draw(shape);
 }
 

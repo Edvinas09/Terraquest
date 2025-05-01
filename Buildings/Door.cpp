@@ -2,13 +2,17 @@
 #include <SFML/Graphics.hpp>
 
 Door::Door(Player* owner, Tile* location)
-    : Building(100, 50, 5, "Door", owner, location), isOpen(false), closedDefenseBonus(10) {}
+    : Building(100, 50, 5, "Door", owner, location), isOpen(false), closedDefenseBonus(10) {
+    // Set the color to brown for Door
+    setBuildingColor(sf::Color(139, 69, 19)); // Brown
+}
 
 void Door::draw(sf::RenderWindow& window, const sf::Vector2f& position) {
     sf::RectangleShape shape;
     shape.setPosition(position);
     shape.setSize(sf::Vector2f(10, 10));
-    shape.setFillColor(sf::Color(139, 69, 19)); // Brown
+    shape.setFillColor(getBuildingColor());
+    shape.setOrigin(5, 5); // Center the shape for better placement
     window.draw(shape);
 }
 
@@ -18,4 +22,20 @@ void Door::update(int turn) {
 
 std::string Door::getDescription() const {
     return "Door: allows passage through walls.";
-} 
+}
+
+bool Door::getIsOpen() const {
+    return isOpen;
+}
+
+int Door::getClosedDefenseBonus() const {
+    return closedDefenseBonus;
+}
+
+void Door::toggleDoor() {
+    isOpen = !isOpen;
+}
+
+int Door::getCurrentDefenseBonus() const {
+    return isOpen ? 0 : closedDefenseBonus;
+}

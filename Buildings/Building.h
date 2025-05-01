@@ -3,10 +3,10 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Tile.h"
 
 // Forward declarations
 class Player;
-class Tile;
 
 // Base Building class that all specific buildings will inherit from
 class Building {
@@ -18,11 +18,12 @@ protected:
     Player* owner;
     Tile* location;
     bool isDestroyed;
+    sf::Color buildingColor;
 
 public:
     Building(int hp, int bCost, int mCost, std::string buildingName, Player* buildingOwner, Tile* buildingLocation);
     virtual ~Building();
-    
+
     // Getters
     int getHealth() const;
     int getBuildCost() const;
@@ -31,7 +32,12 @@ public:
     Player* getOwner() const;
     Tile* getLocation() const;
     bool getIsDestroyed() const;
-    
+    sf::Color getBuildingColor() const;
+
+    // Setters
+    void setLocation(Tile* newLocation);
+    void setBuildingColor(sf::Color color);
+
     // Common methods
     virtual void takeDamage(int damage);
     virtual void repair(int amount);

@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 #include "Building.h"
+#include "Tile.h"
 
 class Player;
-class Tile;
 
 // Factory class to create buildings
 class BuildingFactory {
