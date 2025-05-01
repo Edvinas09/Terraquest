@@ -134,6 +134,7 @@ int main() {
                             }
                             else if (GameFunctions::GridHighlight::getHighlightGridState())
                             {
+                                troops.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
 
                                 GameFunctions::GridHighlight::setHighlightGridState(false);
                             }
