@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Buildings\Building.cpp" />
     <ClCompile Include="GameFunctions.cpp" />
     <ClCompile Include="imgui\imgui-SFML.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Troop\Troop.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buildings\Building.hpp" />
     <ClInclude Include="GameFunctions.hpp" />
     <ClInclude Include="imgui\imconfig-SFML.h" />
     <ClInclude Include="imgui\imconfig.h" />
