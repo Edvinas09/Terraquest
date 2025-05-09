@@ -36,8 +36,8 @@ void Terrain::update(int seed)
     this->seed = seed;
 }
 void Terrain::loadTextures() {
-    std::vector<std::string> files = { "Terrain/Textures/Water.png", "Terrain/Textures/Dirt.png",
-                                       "Terrain/Textures/Hill.png", "Terrain/Textures/Mountain.png" };
+    std::vector<std::string> files = { "resources/images/Water.png", "resources/images/Dirt.png",
+                                       "resources/images/Hill.png", "resources/images/Mountain.png" };
     for (std::string file : files) {
         sf::Texture texture;
         if (!texture.loadFromFile(file)) {

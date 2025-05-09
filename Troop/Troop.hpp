@@ -35,6 +35,7 @@ namespace TroopEntities {
 		int getGridX() const { return gridX; }
 		int getGridY() const { return gridY; }
 
+
 		sf::Vector2f getWorldPosition(float tileSize) const {
 			return sf::Vector2f(
 				gridX * tileSize + tileSize / 2.0f,
@@ -51,7 +52,7 @@ namespace TroopEntities {
 		void setSpeed(int newSpeed) { speed = newSpeed; }
 		void setPosition(const sf::Vector2f& newPosition) { position = newPosition; }
 
-		void draw(sf::RenderWindow& window, const sf::Vector2f& position);
+		void draw(sf::RenderWindow& window , const sf::Vector2f& position);
 
 		virtual std::string toString() const {
 			std::ostringstream oss;
@@ -120,6 +121,8 @@ namespace TroopEntities {
 			return oss.str();
 		}
 	};
+
+
 
 
 	

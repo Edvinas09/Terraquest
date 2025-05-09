@@ -23,12 +23,12 @@ namespace GameFunctions {
         }
     }
 
-    void EntitySpawning::createTroops(sf::RenderWindow& window, sf::Vector2<float>& camera, std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, float tileSize)
+    void EntitySpawning::createTroops(sf::RenderWindow& window, sf::Vector2<float>& camera, TroopEntities::TroopType type,std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, float tileSize)
     {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
         sf::Vector2f worldPos(mousePos.x + camera.x * tileSize, mousePos.y + camera.y * tileSize);
-        auto troop = TroopEntities::TroopCreator::createTroop(TroopEntities::TroopType::Melee, worldPos);
+        auto troop = TroopEntities::TroopCreator::createTroop(type, worldPos);
         troops.push_back(std::move(troop));
 	}
 
