@@ -31,9 +31,6 @@ namespace BuildingEntities {
         int getGridY() const { return gridY; }
 
         sf::Vector2f getWorldPosition(float tileSize) const {
-            if (gridX == -1 || gridY == -1) {
-                return position;
-            }
             return sf::Vector2f(
                 gridX * tileSize + tileSize / 2.0f,
                 gridY * tileSize + tileSize / 2.0f
@@ -43,16 +40,9 @@ namespace BuildingEntities {
         void setGridCoordinates(int x, int y) {
             gridX = x;
             gridY = y;
-            // Update position based on grid coordinates
-            position = sf::Vector2f(x, y);
         }
         void setHealth(int newHealth) { health = newHealth; }
-        void setPosition(const sf::Vector2f& newPosition) { 
-            position = newPosition;
-            // Reset grid coordinates when position is set directly
-            gridX = -1;
-            gridY = -1;
-        }
+        void setPosition(const sf::Vector2f& newPosition) { position = newPosition; }
 
         void draw(sf::RenderWindow& window, const sf::Vector2f& position);
 

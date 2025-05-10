@@ -393,6 +393,9 @@ int main() {
 		if (camera.x <= 0.0) camera.x = 0.0, xMovement = 0.0;
 		if (camera.y <= 0.0) camera.y = 0.0, yMovement = 0.0;
 
+		// Keep buildings snapped to grid after camera movement
+		GameFunctions::EntitySpawning::snapBuildingsToGrid(buildings, tileSize);
+
 		// Update ImGui
 		ImGui::SFML::Update(window, sf::seconds(currentTime));
 

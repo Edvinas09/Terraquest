@@ -49,7 +49,7 @@ namespace GameFunctions {
     void EntitySpawning::spawnBuildings(sf::RenderWindow& window, sf::Vector2<float>& camera, std::vector<std::unique_ptr<BuildingEntities::Building>>& buildings, float tileSize) {
         for (auto& building : buildings) {
             sf::Vector2f worldPos = building->getWorldPosition(tileSize);
-            building->draw(window, sf::Vector2f(worldPos.x - camera.x, worldPos.y - camera.y));
+            building->draw(window, sf::Vector2f(worldPos.x - camera.x * tileSize, worldPos.y - camera.y * tileSize));
         }
     }
 
