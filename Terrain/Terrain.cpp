@@ -13,7 +13,7 @@ using namespace TerrainNamespace;
 Terrain::Terrain(int height, int width, int seed) : height(height), width(width), seed(seed)
 {
     create(width, height, seed);
-    this->tile_size = 5.0;
+    this->tile_size = 30.0;
 
 }
 //---Destructor---//
@@ -50,21 +50,22 @@ void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera, int high
     sf::Vector2<unsigned int> dimensions = window.getSize();
     float window_width = dimensions.x;
     float window_height = dimensions.y;
-    float tile = (1920 / window_width) * this->tile_size;
+    float tile = this->tile_size;
     float scale = tile / 500.0f;
-     for (int x = (int)camera.x; (x-1 - (int)camera.x < (window_width / tile)) && (grid.size()-1 > x); x+=1.0) {
-         for (int y = (int)camera.y; (y-1 - (int)camera.y < (window_height / tile)) && (grid[x].size()-1 > y); y+=1.0) {
+    float outlineThickness = 3.0f;
+
+     for (int x = (int)camera.x - this->width/2; (x-1 - (int)camera.x < (window_width / tile)) && (grid.size()-1 > x); x+=1.0) {
+         for (int y = (int)camera.y - this->height/2; (y-1 - (int)camera.y < (window_height / tile)) && (grid[x].size()-1 > y); y+=1.0) {
              try {
                  sf::Sprite sprite(textures[grid[x][y]]);
                  sprite.setScale({ scale, scale });
-                 sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
-                 sprite.setPosition(size);
+                 sf::Vector2<float> position(tile * (x - camera.x) + (window_width / 2), tile * (y - camera.y) + (window_height / 2));
+                 sprite.setPosition(position);
                  window.draw(sprite);
                  if (x == highlightedTileX && y == highlightedTileY)
                  {
-					 float outlineThickness = 3.0f;
 					 sf::RectangleShape outline(sf::Vector2f(tile, tile));
-                     outline.setPosition({ size.x - outlineThickness, size.y - outlineThickness });
+                     outline.setPosition({ position.x - outlineThickness - (window_width / 2), position.y - outlineThickness - (window_height / 2) });
 					 outline.setFillColor(sf::Color(0, 0, 0, 0));
 					 outline.setOutlineThickness(outlineThickness);
 					 outline.setOutlineColor(sf::Color(255, 255, 255, 100));
