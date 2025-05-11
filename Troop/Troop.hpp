@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <sstream>
+#include <map>
 
 namespace TroopEntities {
 
@@ -20,11 +21,13 @@ namespace TroopEntities {
 		int speed;
 		sf::Vector2f position;
 		int gridX, gridY;
+		static std::map<TroopType, sf::Texture> troopTextures;
+		static bool texturesLoaded;
 
 
 	public:
 		Troop(int health, int damage, int speed, const sf::Vector2f& position)
-			: health(health), damage(damage), speed(speed), position(position) {
+			: health(health), damage(damage), speed(speed), position(position), gridX(-10), gridY(-10) {
 		}
 		virtual ~Troop() = default;
 
@@ -34,6 +37,9 @@ namespace TroopEntities {
 		sf::Vector2f getPosition() const { return position; }
 		int getGridX() const { return gridX; }
 		int getGridY() const { return gridY; }
+
+		static void loadTextures();
+		static bool isTexturesLoaded() { return texturesLoaded; }
 
 
 		sf::Vector2f getWorldPosition(float tileSize) const {

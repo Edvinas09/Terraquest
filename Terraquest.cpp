@@ -46,7 +46,6 @@ int main() {
 
 	//Terrain
 	TerrainNamespace::Terrain terrain(200, 200, 2);
-	float tileSize = terrain.getTileSize();
 
 	//Troops
 	std::vector<std::unique_ptr<TroopEntities::Troop>> troops;
@@ -105,6 +104,8 @@ int main() {
 		auto currentTime = deltaClock.restart().asSeconds();
 		accumulator += currentTime;
 
+
+
 		//Event proceesing
 		while (const std::optional event = window.pollEvent())
 		{
@@ -113,6 +114,15 @@ int main() {
 			if (event->is<sf::Event::Closed>())
 			{
 				window.close();
+			}
+			else if (const auto* resizeEvent = event->getIf<sf::Event::Resized>())
+			{
+				sf::Vector2f newSize(static_cast<float>(resizeEvent->size.x),
+					static_cast<float>(resizeEvent->size.y));
+				sf::View view = window.getView();
+				view.setSize(newSize);
+				view.setCenter(newSize / 2.0f);
+				window.setView(view);
 			}
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
@@ -144,9 +154,9 @@ int main() {
 				float delta = mouse->delta;
 				terrain.setTileSize(terrain.getTileSize() + delta);
 				// Update the tileSize
-				tileSize = terrain.getTileSize();
-				GameFunctions::EntitySpawning::snapTroopsToGrid(troops, tileSize);
-				GameFunctions::EntitySpawning::snapBuildingsToGrid(buildings, tileSize);
+				if (terrain.getTileSize() <= 10.0) terrain.setTileSize(10.0);
+				GameFunctions::EntitySpawning::snapTroopsToGrid(troops, terrain.getTileSize());
+				GameFunctions::EntitySpawning::snapBuildingsToGrid(buildings, terrain.getTileSize());
 			}
 			else if (const auto* mouse = event->getIf<sf::Event::MouseMoved>())
 			{
@@ -223,39 +233,39 @@ int main() {
 					// Troop button clicks
 					if (melee_button.isMouseOver(window)) {
 						melee_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Melee, troops, tileSize);
+						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Melee, troops, terrain.getTileSize());
 						buttonClicked = true;
 					}
 					else if (archer_button.isMouseOver(window)) {
 						archer_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Ranged, troops, tileSize);
+						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Ranged, troops, terrain.getTileSize());
 						buttonClicked = true;
 					}
 					else if (miner_button.isMouseOver(window)) {
 						miner_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Miner, troops, tileSize);
+						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Miner, troops, terrain.getTileSize());
 						buttonClicked = true;
 					}
 
 					// Building button clicks
 					else if (mainbase_button.isMouseOver(window)) {
 						mainbase_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::MainBase, buildings, tileSize);
+						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::MainBase, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
 					else if (tower_button.isMouseOver(window)) {
 						tower_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Tower, buildings, tileSize);
+						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Tower, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
 					else if (wall_button.isMouseOver(window)) {
 						wall_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Wall, buildings, tileSize);
+						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Wall, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
 					else if (door_button.isMouseOver(window)) {
 						door_button.setBackColor(sf::Color(70, 70, 70, 70));
-						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Door, buildings, tileSize);
+						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Door, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
 				}
@@ -393,8 +403,12 @@ int main() {
 		if (camera.x <= 0.0) camera.x = 0.0, xMovement = 0.0;
 		if (camera.y <= 0.0) camera.y = 0.0, yMovement = 0.0;
 
-		// Keep buildings snapped to grid after camera movement
-		GameFunctions::EntitySpawning::snapBuildingsToGrid(buildings, tileSize);
+		if (camera.x >= terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize())-1) {
+            camera.x = terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize()) -1;
+        }
+        if (camera.y >= terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize())-1) {
+            camera.y = terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize()) -1;
+        }
 
 		// Update ImGui
 		ImGui::SFML::Update(window, sf::seconds(currentTime));
@@ -423,8 +437,8 @@ int main() {
 		tower_button.draw(window);
 		wall_button.draw(window);
 		door_button.draw(window);
-		GameFunctions::EntitySpawning::spawnTroops(window, camera, troops, tileSize);
-		GameFunctions::EntitySpawning::spawnBuildings(window, camera, buildings, tileSize);
+		GameFunctions::EntitySpawning::spawnTroops(window, camera, troops, terrain.getTileSize());
+		GameFunctions::EntitySpawning::spawnBuildings(window, camera, buildings, terrain.getTileSize());
 		ImGui::SFML::Render(window);
 		window.display();
 	}
