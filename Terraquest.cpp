@@ -9,7 +9,7 @@
 #include "Troop/Troop.hpp"
 #include "Buildings/Building.hpp"
 #include "GameFunctions.hpp"
-#include "EventHandler.cpp"
+#include "EventHandler.hpp"
 
 #include <iostream>
 
