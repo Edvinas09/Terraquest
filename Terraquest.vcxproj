@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Buildings\Building.cpp" />
-    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="GameFunctions.cpp" />
     <ClCompile Include="imgui\imgui-SFML.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
