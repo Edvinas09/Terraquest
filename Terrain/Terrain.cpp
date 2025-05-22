@@ -6,6 +6,7 @@
 #include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <random>
 
 using namespace TerrainNamespace;
 
@@ -21,6 +22,7 @@ void Terrain::create(int width, int height, int seed)
 {
     grid.resize(height, std::vector<int>(width, 0));
     obstacleGrid.resize(height, std::vector<bool>(width, 0));
+    resourceGrid.resize(height, std::vector<int>(width, 0));
     generateTerrain();
     loadTextures();
 }
@@ -38,7 +40,9 @@ void Terrain::update(int seed)
 }
 void Terrain::loadTextures() {
     std::vector<std::string> files = { "resources/images/Water.png", "resources/images/Dirt.png",
-                                       "resources/images/Hill.png", "resources/images/Mountain.png" };
+                                       "resources/images/Hill.png", "resources/images/Mountain.png",
+                                       "resources/images/Tree.png", "resources/images/Rock.png",
+                                       "resources/images/Iron.png"};
     for (std::string file : files) {
         sf::Texture texture;
         if (!texture.loadFromFile(file)) {
@@ -61,6 +65,16 @@ void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera, int high
                  sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
                  sprite.setPosition(size);
                  window.draw(sprite);
+
+                 //Resources
+                 if (resourceGrid[x][y] > 0) {
+                     sf::Sprite sprite(textures[resourceGrid[x][y] + 3]);
+                     sprite.setScale({ scale, scale });
+                     sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
+                     sprite.setPosition(size);
+                     window.draw(sprite);
+                 }
+
                  if (x == highlightedTileX && y == highlightedTileY || obstacleGrid[x][y] == 1)
                  {
 					 float outlineThickness = 3.0f;
@@ -93,17 +107,28 @@ void Terrain::generateTerrain()
     noise.SetSeed(seed);
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     noise.SetFrequency(0.04f);
+
+    std::srand(seed);
+    int random;
+
     for (int y = 0; y < height; ++y)
     {
         for (int x = 0; x < width; ++x)
         {
             float value = noise.GetNoise((float)x, (float)y);
             grid[y][x] = static_cast<int>((value + 1.0f) * 2.0f); // Normalize to 0-3
+            resourceGrid[y][x] = 0;
             if (grid[y][x] == 0 || grid[y][x] == 3) {
                 obstacleGrid[y][x] = 1;
             }
             else {
                 obstacleGrid[y][x] = 0;
+                
+                random = rand();
+                if (random % 1000 < 10) {
+                    resourceGrid[y][x] = (random % 3) + 1;
+                }
+
             }
             
         }
@@ -133,6 +158,10 @@ const std::vector<std::vector<int>> Terrain::getGrid()
 const std::vector<std::vector<bool>> Terrain::getObstacleGrid()
 {
     return obstacleGrid;
+}
+const std::vector<std::vector<int>> Terrain::getResourceGrid()
+{
+    return resourceGrid;
 }
 
 //--Setters--//

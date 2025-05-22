@@ -24,6 +24,7 @@ namespace TerrainNamespace {
         float tile_size;
         std::vector<sf::Texture> textures;
         std::vector<std::vector<int>> grid;
+        std::vector<std::vector<int>> resourceGrid;
         std::vector<std::vector<bool>> obstacleGrid;
 
     public:
@@ -47,6 +48,7 @@ namespace TerrainNamespace {
         float getTileSize();
         const std::vector<std::vector<int>> getGrid();
         const std::vector<std::vector<bool>> getObstacleGrid();
+        const std::vector<std::vector<int>> getResourceGrid();
 
         void setSeed(int seed);
         void setHeight(int height);
