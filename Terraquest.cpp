@@ -54,6 +54,9 @@ int main() {
 	//Buildings
 	std::vector<std::unique_ptr<BuildingEntities::Building>> buildings;
 
+	//Obtable vector
+	std::vector<sf::Vector2<int>> oldLocations;
+
 	//Troop Buttons
 	UI::Button melee_button({ 200, 50 }, "Melee", sf::Color::Red, sf::Color::White, font);
 	melee_button.setPosition({ 1000, 700 });
@@ -99,7 +102,8 @@ int main() {
 	sf::Cursor arrowCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow).value();
 
 	//Main game loop
-	while (window.isOpen()) {
+	while (window.isOpen()) 
+	{
 		//Clocks
 		auto currentTime = deltaClock.restart().asSeconds();
 		accumulator += currentTime;
@@ -412,9 +416,27 @@ int main() {
 
 		// Update ImGui
 		ImGui::SFML::Update(window, sf::seconds(currentTime));
+		while (accumulator >= deltaTime) 
+		{
+			
+			while(!oldLocations.empty()) 
+			{
+				terrain.setObstacle(oldLocations.back().x, oldLocations.back().y, 0);
+				oldLocations.pop_back();
+			}
 
-		while (accumulator >= deltaTime) {
-			//Update your game logic here, updates vyks reciau negu frames, dabar 20/sec
+			for (auto& troop : troops) 
+			{
+				terrain.setObstacle(troop->getGridX(), troop->getGridY(), 1);
+				oldLocations.push_back({ troop->getGridX(), troop->getGridY() });
+			}
+
+			for (auto& building : buildings)
+			{
+				terrain.setObstacle(building->getGridX(), building->getGridY(), 1);
+				oldLocations.push_back({ building->getGridX(), building->getGridY() });
+			}
+
 			accumulator -= deltaTime;
 		}
 

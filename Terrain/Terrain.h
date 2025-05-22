@@ -24,6 +24,7 @@ namespace TerrainNamespace {
         float tile_size;
         std::vector<sf::Texture> textures;
         std::vector<std::vector<int>> grid;
+        std::vector<std::vector<bool>> obstacleGrid;
 
     public:
         //---Constructor---//
@@ -45,12 +46,14 @@ namespace TerrainNamespace {
         int getSeed();
         float getTileSize();
         const std::vector<std::vector<int>> getGrid();
+        const std::vector<std::vector<bool>> getObstacleGrid();
 
         void setSeed(int seed);
         void setHeight(int height);
         void setWidth(int width);
         void setTileSize(float size);
         void setGrid(const std::vector<std::vector<int>> grid);
+        void setObstacle(int x, int y, bool value);
 
         std::string toString();
 

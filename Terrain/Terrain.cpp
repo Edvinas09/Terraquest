@@ -14,18 +14,19 @@ Terrain::Terrain(int height, int width, int seed) : height(height), width(width)
 {
     create(width, height, seed);
     this->tile_size = 5.0;
-
 }
 //---Destructor---//
 //---CRUD---//
 void Terrain::create(int width, int height, int seed)
 {
     grid.resize(height, std::vector<int>(width, 0));
+    obstacleGrid.resize(height, std::vector<bool>(width, 0));
     generateTerrain();
     loadTextures();
 }
 void Terrain::destroy()
 {
+    obstacleGrid.clear();
     grid.clear();
     height = 0;
     width = 0;
@@ -60,7 +61,7 @@ void Terrain::draw(sf::RenderWindow& window, sf::Vector2<float> camera, int high
                  sf::Vector2<float> size(tile * (x - camera.x), tile * (y - camera.y));
                  sprite.setPosition(size);
                  window.draw(sprite);
-                 if (x == highlightedTileX && y == highlightedTileY)
+                 if (x == highlightedTileX && y == highlightedTileY || obstacleGrid[x][y] == 1)
                  {
 					 float outlineThickness = 3.0f;
 					 sf::RectangleShape outline(sf::Vector2f(tile, tile));
@@ -97,7 +98,14 @@ void Terrain::generateTerrain()
         for (int x = 0; x < width; ++x)
         {
             float value = noise.GetNoise((float)x, (float)y);
-            grid[y][x] = static_cast<int>((value + 1.0f) * 2.0f); // Normalize to 0-5
+            grid[y][x] = static_cast<int>((value + 1.0f) * 2.0f); // Normalize to 0-3
+            if (grid[y][x] == 0 || grid[y][x] == 3) {
+                obstacleGrid[y][x] = 1;
+            }
+            else {
+                obstacleGrid[y][x] = 0;
+            }
+            
         }
     }
 }
@@ -122,6 +130,11 @@ const std::vector<std::vector<int>> Terrain::getGrid()
 {
     return grid;
 }
+const std::vector<std::vector<bool>> Terrain::getObstacleGrid()
+{
+    return obstacleGrid;
+}
+
 //--Setters--//
 void Terrain::setHeight(int height)
 {
@@ -141,4 +154,9 @@ void Terrain::setGrid(std::vector<std::vector<int>> grid)
 }
 void Terrain::setTileSize(float size) {
     this->tile_size = size;
+}
+void Terrain::setObstacle(int x, int y, bool value) {
+    if (x > 0 && y > 0) {
+        obstacleGrid[x][y] = value;
+    }
 }
