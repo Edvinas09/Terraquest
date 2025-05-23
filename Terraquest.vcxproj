@@ -183,6 +183,18 @@
     <ClInclude Include="Troop\Troop.hpp" />
     <ClInclude Include="UI.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\images\Archer.png" />
+    <Image Include="resources\images\Dirt.png" />
+    <Image Include="resources\images\Hill.png" />
+    <Image Include="resources\images\Iron.png" />
+    <Image Include="resources\images\Miner.png" />
+    <Image Include="resources\images\Mountain.png" />
+    <Image Include="resources\images\Rock.png" />
+    <Image Include="resources\images\Swordsman.png" />
+    <Image Include="resources\images\Tree.png" />
+    <Image Include="resources\images\Water.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

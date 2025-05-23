@@ -42,6 +42,9 @@
     <ClCompile Include="GameFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Buildings\Building.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -86,5 +89,40 @@
     <ClInclude Include="Troop\Troop.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Buildings\Building.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\images\Archer.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Dirt.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Hill.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Iron.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Miner.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Mountain.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Rock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Swordsman.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Tree.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\images\Water.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

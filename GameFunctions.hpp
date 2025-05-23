@@ -14,7 +14,7 @@ namespace GameFunctions {
     {
     public:
          static void snapTroopsToGrid(std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, float tileSize);
-         static void spawnTroops(sf::RenderWindow& window, sf::Vector2<float>& camera,std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, float tileSize);
+         static void spawnTroops(sf::RenderWindow& window, sf::Vector2<float>& camera,std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, TerrainNamespace::Terrain& terrain);
          static void createTroops(sf::RenderWindow& window, sf::Vector2<float>& camera, TroopEntities::TroopType type, std::vector<std::unique_ptr<TroopEntities::Troop>>& troops, float tileSize);
          
          // Building spawning functions

@@ -81,13 +81,18 @@ namespace TroopEntities {
 
 	class Miner : public Troop {
 		int gatherRate;
+		int resourceType;
 	public:
 		Miner(int health, int damage, int speed, int gatherRate, const sf::Vector2f& position)
-			: Troop(health, damage, speed, position), gatherRate(gatherRate) {
+			: Troop(health, damage, speed, position), gatherRate(gatherRate), resourceType(-1) {
 		}
 
 		int getGatherRate() const { return gatherRate; }
 		void setGatherRate(int newGatherRate) { gatherRate = newGatherRate; }
+
+
+		int getResourceType() const { return resourceType; }
+		void setResourceType(int newResourceType) { resourceType = newResourceType; }
 
 		std::string toString() const override {
 			std::ostringstream oss;

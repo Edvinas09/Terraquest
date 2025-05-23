@@ -34,6 +34,7 @@ int main() {
 	PlacementMode currentPlacementMode = PlacementMode::None;
 	BuildingEntities::BuildingType currentBuildingType = BuildingEntities::BuildingType::MainBase;
 	TroopEntities::TroopType currentTroopType = TroopEntities::TroopType::Melee;
+	bool isObstacle = false;
 
 	//Font for the game
 	sf::Font font;
@@ -46,10 +47,14 @@ int main() {
 
 	//Terrain
 	TerrainNamespace::Terrain terrain(200, 200, 2);
+	sf::Color color;
 
 	//Troops
 	std::vector<std::unique_ptr<TroopEntities::Troop>> troops;
 	sf::Vector2f troopPosition;
+
+	//Resources;
+	int resource;
 
 	//Buildings
 	std::vector<std::unique_ptr<BuildingEntities::Building>> buildings;
@@ -164,7 +169,12 @@ int main() {
 			}
 			else if (const auto* mouse = event->getIf<sf::Event::MouseMoved>())
 			{
+
 				window.setMouseCursor(arrowCursor);
+				isObstacle = terrain.getObstacleGrid()[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
+
+
+				color = isObstacle ? sf::Color(255, 0, 0, 200) : sf::Color(255, 255, 255, 100);
 
 				// Troop buttons hover
 				if (melee_button.isMouseOver(window)) {
@@ -300,6 +310,7 @@ int main() {
 							currentPlacementMode = PlacementMode::Troop;
 							currentTroopType = TroopEntities::TroopType::Miner;
 							GameFunctions::GridHighlight::changeHighlightGridState();
+							resource = terrain.getResourceGrid()[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
 						}
 					}
 
@@ -339,18 +350,21 @@ int main() {
 
 					// Grid placement
 					else if (GameFunctions::GridHighlight::getHighlightGridState()) {
-						if (currentPlacementMode == PlacementMode::Troop) {
-							if (!troops.empty()) {
-								troops.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
-								GameFunctions::GridHighlight::setHighlightGridState(false);
-								currentPlacementMode = PlacementMode::None;
+
+						if (!isObstacle) {
+							if (currentPlacementMode == PlacementMode::Troop) {
+								if (!troops.empty()) {
+									troops.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
+									GameFunctions::GridHighlight::setHighlightGridState(false);
+									currentPlacementMode = PlacementMode::None;
+								}
 							}
-						}
-						else if (currentPlacementMode == PlacementMode::Building) {
-							if (!buildings.empty()) {
-								buildings.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
-								GameFunctions::GridHighlight::setHighlightGridState(false);
-								currentPlacementMode = PlacementMode::None;
+							else if (currentPlacementMode == PlacementMode::Building) {
+								if (!buildings.empty()) {
+									buildings.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
+									GameFunctions::GridHighlight::setHighlightGridState(false);
+									currentPlacementMode = PlacementMode::None;
+								}
 							}
 						}
 					}
@@ -437,6 +451,9 @@ int main() {
 				oldLocations.push_back({ building->getGridX(), building->getGridY() });
 			}
 
+			
+
+
 			accumulator -= deltaTime;
 		}
 
@@ -449,7 +466,7 @@ int main() {
 		//Terrain
 		terrain.draw(window, camera,
 			GameFunctions::GridHighlight::getHighlightGridState() ? GameFunctions::GridHighlight::getHighlightedTileX() : -1,
-			GameFunctions::GridHighlight::getHighlightGridState() ? GameFunctions::GridHighlight::getHighlightedTileY() : -1);
+			GameFunctions::GridHighlight::getHighlightGridState() ? GameFunctions::GridHighlight::getHighlightedTileY() : -1, color);
 
 		//Display
 		melee_button.draw(window);
@@ -459,7 +476,7 @@ int main() {
 		tower_button.draw(window);
 		wall_button.draw(window);
 		door_button.draw(window);
-		GameFunctions::EntitySpawning::spawnTroops(window, camera, troops, terrain.getTileSize());
+		GameFunctions::EntitySpawning::spawnTroops(window, camera, troops, terrain);
 		GameFunctions::EntitySpawning::spawnBuildings(window, camera, buildings, terrain.getTileSize());
 		ImGui::SFML::Render(window);
 		window.display();
