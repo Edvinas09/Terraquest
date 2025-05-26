@@ -457,13 +457,13 @@ int main() {
 					int resourceType = miner->getResourceType();
 					if (miner->getTimer() >= 5.0f && resourceType != 0) {
 						if (resourceType == 1) {
-							UI::Resources::setWood(1);
+							UI::Resources::setWood(miner->getGatherRate());
 						}
 						else if (resourceType == 2) {
-							UI::Resources::setRock(1);
+							UI::Resources::setRock(miner->getGatherRate());
 						}
 						else if (resourceType == 3) {
-							UI::Resources::setIron(1);
+							UI::Resources::setIron(miner->getGatherRate());
 						}
 						miner->setTimer(0.0f);
 					}
