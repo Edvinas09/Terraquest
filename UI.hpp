@@ -73,4 +73,22 @@ namespace UI {
 		}
 	};
 
+	class Resources {
+	private:
+		static int iron;
+		static int wood;
+		static int rock;
+
+	public:
+
+		static int getIron();
+		static void setIron(int newIron);
+
+		static int getWood();
+		static void setWood(int newWood);
+
+		static int getRock();
+		static void setRock(int newRock);
+	};
+
 }

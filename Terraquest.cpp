@@ -48,6 +48,7 @@ int main() {
 	//Terrain
 	TerrainNamespace::Terrain terrain(200, 200, 2);
 	sf::Color color;
+	int resourceType;
 
 	//Troops
 	std::vector<std::unique_ptr<TroopEntities::Troop>> troops;
@@ -107,7 +108,7 @@ int main() {
 	sf::Cursor arrowCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow).value();
 
 	//Main game loop
-	while (window.isOpen()) 
+	while (window.isOpen())
 	{
 		//Clocks
 		auto currentTime = deltaClock.restart().asSeconds();
@@ -310,7 +311,6 @@ int main() {
 							currentPlacementMode = PlacementMode::Troop;
 							currentTroopType = TroopEntities::TroopType::Miner;
 							GameFunctions::GridHighlight::changeHighlightGridState();
-							resource = terrain.getResourceGrid()[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
 						}
 					}
 
@@ -355,6 +355,12 @@ int main() {
 							if (currentPlacementMode == PlacementMode::Troop) {
 								if (!troops.empty()) {
 									troops.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
+
+									auto* miner = dynamic_cast<TroopEntities::Miner*>(troops.back().get());
+									if (miner) {
+										int resourceType = terrain.getResourceGrid()[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
+										miner->setResourceType(resourceType);
+									}
 									GameFunctions::GridHighlight::setHighlightGridState(false);
 									currentPlacementMode = PlacementMode::None;
 								}
@@ -421,28 +427,47 @@ int main() {
 		if (camera.x <= 0.0) camera.x = 0.0, xMovement = 0.0;
 		if (camera.y <= 0.0) camera.y = 0.0, yMovement = 0.0;
 
-		if (camera.x >= terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize())-1) {
-            camera.x = terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize()) -1;
-        }
-        if (camera.y >= terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize())-1) {
-            camera.y = terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize()) -1;
-        }
+		if (camera.x >= terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize()) - 1) {
+			camera.x = terrain.getWidth() - (window.getView().getSize().x / terrain.getTileSize()) - 1;
+		}
+		if (camera.y >= terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize()) - 1) {
+			camera.y = terrain.getHeight() - (window.getView().getSize().y / terrain.getTileSize()) - 1;
+		}
 
 		// Update ImGui
 		ImGui::SFML::Update(window, sf::seconds(currentTime));
-		while (accumulator >= deltaTime) 
+		while (accumulator >= deltaTime)
 		{
-			
-			while(!oldLocations.empty()) 
+
+			while (!oldLocations.empty())
 			{
 				terrain.setObstacle(oldLocations.back().x, oldLocations.back().y, 0);
 				oldLocations.pop_back();
 			}
 
-			for (auto& troop : troops) 
+			for (auto& troop : troops)
 			{
+
 				terrain.setObstacle(troop->getGridX(), troop->getGridY(), 1);
 				oldLocations.push_back({ troop->getGridX(), troop->getGridY() });
+
+				auto* miner = dynamic_cast<TroopEntities::Miner*>(troop.get());
+				if (miner) {
+					miner->setTimer(miner->getTimer() + deltaTime);
+					int resourceType = miner->getResourceType();
+					if (miner->getTimer() >= 5.0f && resourceType != 0) {
+						if (resourceType == 1) {
+							UI::Resources::setWood(1);
+						}
+						else if (resourceType == 2) {
+							UI::Resources::setRock(1);
+						}
+						else if (resourceType == 3) {
+							UI::Resources::setIron(1);
+						}
+						miner->setTimer(0.0f);
+					}
+				}
 			}
 
 			for (auto& building : buildings)
@@ -451,7 +476,7 @@ int main() {
 				oldLocations.push_back({ building->getGridX(), building->getGridY() });
 			}
 
-			
+
 
 
 			accumulator -= deltaTime;

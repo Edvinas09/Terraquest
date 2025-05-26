@@ -82,6 +82,7 @@ namespace TroopEntities {
 	class Miner : public Troop {
 		int gatherRate;
 		int resourceType;
+		float miningTimer = 0.0f; 
 	public:
 		Miner(int health, int damage, int speed, int gatherRate, const sf::Vector2f& position)
 			: Troop(health, damage, speed, position), gatherRate(gatherRate), resourceType(-1) {
@@ -93,6 +94,9 @@ namespace TroopEntities {
 
 		int getResourceType() const { return resourceType; }
 		void setResourceType(int newResourceType) { resourceType = newResourceType; }
+
+		void setTimer(float timer) { miningTimer = timer; }
+		float getTimer() const { return miningTimer; }
 
 		std::string toString() const override {
 			std::ostringstream oss;
