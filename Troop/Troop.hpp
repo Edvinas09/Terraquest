@@ -58,7 +58,7 @@ namespace TroopEntities {
 		void setSpeed(int newSpeed) { speed = newSpeed; }
 		void setPosition(const sf::Vector2f& newPosition) { position = newPosition; }
 
-		void draw(sf::RenderWindow& window , const sf::Vector2f& position);
+		void draw(sf::RenderWindow& window , const sf::Vector2f& position, float tilesize);
 
 		virtual std::string toString() const {
 			std::ostringstream oss;

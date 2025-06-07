@@ -69,6 +69,11 @@ int main() {
 	melee_button.setFont(font);
 	melee_button.setTextColor(sf::Color::White);
 
+	UI::Button tank_button({ 200, 50 }, "Tank", sf::Color::Red, sf::Color::White, font);
+	tank_button.setPosition({ 750,700 });
+	tank_button.setFont(font);
+	tank_button.setTextColor(sf::Color::White);
+
 	UI::Button archer_button({ 200, 50 }, "Archer", sf::Color::Red, sf::Color::White, font);
 	archer_button.setPosition({ 500, 700 });
 	archer_button.setFont(font);
@@ -78,6 +83,7 @@ int main() {
 	miner_button.setPosition({ 200,700 });
 	miner_button.setFont(font);
 	miner_button.setTextColor(sf::Color::White);
+
 
 	//Building Buttons
 	UI::Button mainbase_button({ 200, 50 }, "Main Base", sf::Color::Blue, sf::Color::White, font);
@@ -102,6 +108,19 @@ int main() {
 
 	//Button tracker
 	bool buttonClicked = false;
+
+	// Highlight state
+	int highlightX = -1, highlightY = -1;
+	bool isTroopGridHovered = false;
+	int hoveredTroopGridX = -1, hoveredTroopGridY = -1;
+
+	// Fade animation
+	bool isTroopGridSelected = false;
+	float highlightFade = 0.0f;
+	float highlightFadeSpeed = 2.0f; // faster/slower fade
+	sf::Clock highlightFadeClock;
+	int selectedTroopGridX = -1, selectedTroopGridY = -1;
+
 
 	//Cursor
 	sf::Cursor handCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Hand).value();
@@ -172,10 +191,38 @@ int main() {
 			{
 
 				window.setMouseCursor(arrowCursor);
-				isObstacle = terrain.getObstacleGrid()[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
-
+				const auto& obstacleGrid = terrain.getObstacleGrid();
+				if (GameFunctions::GridHighlight::getHighlightedTileX()>= 0 && GameFunctions::GridHighlight::getHighlightedTileY() >= 0 && GameFunctions::GridHighlight::getHighlightedTileX() < static_cast<int>(obstacleGrid.size()) && GameFunctions::GridHighlight::getHighlightedTileY() < static_cast<int>(obstacleGrid[GameFunctions::GridHighlight::getHighlightedTileX()].size())) {
+					isObstacle = obstacleGrid[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
+				}
+				else {
+					isObstacle = false;
+				}
 
 				color = isObstacle ? sf::Color(255, 0, 0, 200) : sf::Color(255, 255, 255, 100);
+
+				//highlight if not placing and no button is clicked
+				if (currentPlacementMode == PlacementMode::None && !buttonClicked) {
+					GameFunctions::GridHighlight::calculateHighlightCoordinate(window, terrain, camera);
+					int gridX = GameFunctions::GridHighlight::getHighlightedTileX();
+					int gridY = GameFunctions::GridHighlight::getHighlightedTileY();
+
+					// checking for troop on this grid
+					isTroopGridHovered = false;
+					for (const auto& troop : troops) {
+						if (troop->getGridX() == gridX && troop->getGridY() == gridY) {
+							isTroopGridHovered = true;
+							hoveredTroopGridX = gridX;
+							hoveredTroopGridY = gridY;
+							break;
+						}
+					}
+					if (!isTroopGridHovered) {
+						hoveredTroopGridX = -1;
+						hoveredTroopGridY = -1;
+					}
+				}
+
 
 				// Troop buttons hover
 				if (melee_button.isMouseOver(window)) {
@@ -200,6 +247,14 @@ int main() {
 				}
 				else {
 					miner_button.setBackColor(sf::Color::Blue);
+				}
+
+				if (tank_button.isMouseOver(window)) {
+					tank_button.setBackColor(sf::Color::Black);
+					window.setMouseCursor(handCursor);
+				}
+				else {
+					tank_button.setBackColor(sf::Color::Blue);
 				}
 
 				// Building buttons hover
@@ -243,7 +298,16 @@ int main() {
 			else if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>())
 			{
 				if (mouse->button == sf::Mouse::Button::Left) {
+					if (isTroopGridSelected) {
+						isTroopGridSelected = false;
+						selectedTroopGridX = -1;
+						selectedTroopGridY = -1;
+						highlightX = -1;
+						highlightY = -1;
+					}
 					buttonClicked = false;
+
+
 
 					// Troop button clicks
 					if (melee_button.isMouseOver(window)) {
@@ -259,6 +323,11 @@ int main() {
 					else if (miner_button.isMouseOver(window)) {
 						miner_button.setBackColor(sf::Color(70, 70, 70, 70));
 						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Miner, troops, terrain.getTileSize());
+						buttonClicked = true;
+					}
+					else if (tank_button.isMouseOver(window)) {
+						tank_button.setBackColor(sf::Color(70, 70, 70, 70));
+						GameFunctions::EntitySpawning::createTroops(window, camera, TroopEntities::TroopType::Tank, troops, terrain.getTileSize());
 						buttonClicked = true;
 					}
 
@@ -283,6 +352,20 @@ int main() {
 						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Door, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
+				}
+				if (mouse->button == sf::Mouse::Button::Right) {
+					isTroopGridSelected = false;
+					selectedTroopGridX = -1;
+					selectedTroopGridY = -1;
+					highlightX = -1;
+					highlightY = -1;
+				}
+				if (isTroopGridHovered && mouse->button == sf::Mouse::Button::Left) {
+					isTroopGridSelected = true;
+					highlightFade = 0.0f;
+					highlightFadeClock.restart();
+					selectedTroopGridX = hoveredTroopGridX;
+					selectedTroopGridY = hoveredTroopGridY;
 				}
 			}
 			else if (const auto* mouse = event->getIf<sf::Event::MouseButtonReleased>())
@@ -310,6 +393,14 @@ int main() {
 						if (buttonClicked) {
 							currentPlacementMode = PlacementMode::Troop;
 							currentTroopType = TroopEntities::TroopType::Miner;
+							GameFunctions::GridHighlight::changeHighlightGridState();
+						}
+					}
+					else if (tank_button.isMouseOver(window)) {
+						tank_button.setBackColor(sf::Color::Black);
+						if (buttonClicked) {
+							currentPlacementMode = PlacementMode::Troop;
+							currentTroopType = TroopEntities::TroopType::Tank;
 							GameFunctions::GridHighlight::changeHighlightGridState();
 						}
 					}
@@ -363,6 +454,12 @@ int main() {
 									}
 									GameFunctions::GridHighlight::setHighlightGridState(false);
 									currentPlacementMode = PlacementMode::None;
+									isTroopGridSelected = false;
+									highlightX = -1;
+									highlightY = -1;
+									hoveredTroopGridX = -1;
+									hoveredTroopGridY = -1;
+									isTroopGridHovered = false;
 								}
 							}
 							else if (currentPlacementMode == PlacementMode::Building) {
@@ -370,6 +467,12 @@ int main() {
 									buildings.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
 									GameFunctions::GridHighlight::setHighlightGridState(false);
 									currentPlacementMode = PlacementMode::None;
+									isTroopGridSelected = false;
+									highlightX = -1;
+									highlightY = -1;
+									hoveredTroopGridX = -1;
+									hoveredTroopGridY = -1;
+									isTroopGridHovered = false;
 								}
 							}
 						}
@@ -488,15 +591,42 @@ int main() {
 
 		window.clear();
 
+		// highlight fade
+		if (isTroopGridSelected) {
+			float elapsed = highlightFadeClock.getElapsedTime().asSeconds();
+			// Oscillate between 0.55 and 0.9
+			highlightFade = 0.55f + 0.45f * std::sin(elapsed * 5.0f); // 5.0f = speed
+			if (highlightFade < 0.0f) highlightFade = 0.0f;
+			if (highlightFade > 1.0f) highlightFade = 1.0f;
+		}
+
 		//Terrain
-		terrain.draw(window, camera,
-			GameFunctions::GridHighlight::getHighlightGridState() ? GameFunctions::GridHighlight::getHighlightedTileX() : -1,
-			GameFunctions::GridHighlight::getHighlightGridState() ? GameFunctions::GridHighlight::getHighlightedTileY() : -1, color);
+		sf::Color highlightColor = sf::Color(0, 255, 0, 100); //green, semi-transparent
+
+		if (isTroopGridSelected && currentPlacementMode != PlacementMode::Building) {
+			highlightX = selectedTroopGridX;
+			highlightY = selectedTroopGridY;
+			highlightColor.a = static_cast<std::uint8_t>(200 * highlightFade);
+		}
+		else if (isTroopGridHovered && currentPlacementMode != PlacementMode::Building) {
+			highlightX = hoveredTroopGridX;
+			highlightY = hoveredTroopGridY;
+			highlightColor.a = 100;
+		}
+		else if (GameFunctions::GridHighlight::getHighlightGridState()) {
+			highlightX = GameFunctions::GridHighlight::getHighlightedTileX();
+			highlightY = GameFunctions::GridHighlight::getHighlightedTileY();
+			highlightColor = color;
+		}
+
+		// Draw terrain
+		terrain.draw(window, camera, highlightX, highlightY, highlightColor);
 
 		//Display
 		melee_button.draw(window);
 		archer_button.draw(window);
 		miner_button.draw(window);
+		tank_button.draw(window);
 		mainbase_button.draw(window);
 		tower_button.draw(window);
 		wall_button.draw(window);

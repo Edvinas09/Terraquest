@@ -35,7 +35,7 @@ namespace GameFunctions {
 		for (auto& troop : troops)
 		{
 			sf::Vector2f worldPos = troop->getWorldPosition(terrain.getTileSize());
-			troop->draw(window, sf::Vector2f(worldPos.x - camera.x * terrain.getTileSize(),worldPos.y - camera.y * terrain.getTileSize()));
+			troop->draw(window, sf::Vector2f(worldPos.x - camera.x * terrain.getTileSize(),worldPos.y - camera.y * terrain.getTileSize()),terrain.getTileSize());
 		}
 	}
 
