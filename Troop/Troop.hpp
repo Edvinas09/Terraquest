@@ -23,6 +23,9 @@ namespace TroopEntities {
 		int gridX, gridY;
 		static std::map<TroopType, sf::Texture> troopTextures;
 		static bool texturesLoaded;
+		std::vector<sf::Vector2i> path;
+		float moveTimer = 0.0f;
+		float moveDelay = 0.15f;
 
 
 	public:
@@ -37,6 +40,10 @@ namespace TroopEntities {
 		sf::Vector2f getPosition() const { return position; }
 		int getGridX() const { return gridX; }
 		int getGridY() const { return gridY; }
+
+		void setPath(const std::vector<sf::Vector2i>& newPath) { path = newPath; }
+		bool hasPath() const { return !path.empty(); }
+		void updatePath(float deltaTime, float tileSize);
 
 		static void loadTextures();
 		static bool isTexturesLoaded() { return texturesLoaded; }

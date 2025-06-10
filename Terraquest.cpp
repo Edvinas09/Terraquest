@@ -53,6 +53,7 @@ int main() {
 	//Troops
 	std::vector<std::unique_ptr<TroopEntities::Troop>> troops;
 	sf::Vector2f troopPosition;
+	int selectedTroopIndex = -1;
 
 	//Resources;
 	int resource;
@@ -117,7 +118,6 @@ int main() {
 	// Fade animation
 	bool isTroopGridSelected = false;
 	float highlightFade = 0.0f;
-	float highlightFadeSpeed = 2.0f; // faster/slower fade
 	sf::Clock highlightFadeClock;
 	int selectedTroopGridX = -1, selectedTroopGridY = -1;
 
@@ -192,7 +192,7 @@ int main() {
 
 				window.setMouseCursor(arrowCursor);
 				const auto& obstacleGrid = terrain.getObstacleGrid();
-				if (GameFunctions::GridHighlight::getHighlightedTileX()>= 0 && GameFunctions::GridHighlight::getHighlightedTileY() >= 0 && GameFunctions::GridHighlight::getHighlightedTileX() < static_cast<int>(obstacleGrid.size()) && GameFunctions::GridHighlight::getHighlightedTileY() < static_cast<int>(obstacleGrid[GameFunctions::GridHighlight::getHighlightedTileX()].size())) {
+				if (GameFunctions::GridHighlight::getHighlightedTileX() >= 0 && GameFunctions::GridHighlight::getHighlightedTileY() >= 0 && GameFunctions::GridHighlight::getHighlightedTileX() < static_cast<int>(obstacleGrid.size()) && GameFunctions::GridHighlight::getHighlightedTileY() < static_cast<int>(obstacleGrid[GameFunctions::GridHighlight::getHighlightedTileX()].size())) {
 					isObstacle = obstacleGrid[GameFunctions::GridHighlight::getHighlightedTileX()][GameFunctions::GridHighlight::getHighlightedTileY()];
 				}
 				else {
@@ -298,13 +298,6 @@ int main() {
 			else if (const auto* mouse = event->getIf<sf::Event::MouseButtonPressed>())
 			{
 				if (mouse->button == sf::Mouse::Button::Left) {
-					if (isTroopGridSelected) {
-						isTroopGridSelected = false;
-						selectedTroopGridX = -1;
-						selectedTroopGridY = -1;
-						highlightX = -1;
-						highlightY = -1;
-					}
 					buttonClicked = false;
 
 
@@ -352,6 +345,63 @@ int main() {
 						GameFunctions::EntitySpawning::createBuildings(window, camera, BuildingEntities::BuildingType::Door, buildings, terrain.getTileSize());
 						buttonClicked = true;
 					}
+
+					//PathFinding
+					int gridX = GameFunctions::GridHighlight::getHighlightedTileX();
+					int gridY = GameFunctions::GridHighlight::getHighlightedTileY();
+
+					// Recalculate isObstacle for the clicked tile
+					const auto& obstacleGrid = terrain.getObstacleGrid();
+					isObstacle = false;
+					if (gridX >= 0 && gridY >= 0 && gridX < static_cast<int>(obstacleGrid.size()) && gridY < static_cast<int>(obstacleGrid[gridX].size())) {
+						isObstacle = obstacleGrid[gridX][gridY];
+					}
+
+					// Check if clicking on a troop for selection
+					bool clickedOnTroop = false;
+					for (size_t i = 0; i < troops.size(); ++i) {
+						if (troops[i]->getGridX() == gridX && troops[i]->getGridY() == gridY) {
+							clickedOnTroop = true;
+							isTroopGridSelected = true;
+							selectedTroopIndex = static_cast<int>(i);
+							selectedTroopGridX = gridX;
+							selectedTroopGridY = gridY;
+							highlightFade = 0.0f;
+							highlightFadeClock.restart();
+							std::cout << "[DEBUG] Troop selected at (" << gridX << ", " << gridY << "), index: " << selectedTroopIndex << std::endl;
+							break;
+						}
+					}
+
+					// try to move the troop
+					if (isTroopGridSelected && selectedTroopIndex != -1 && !clickedOnTroop && !isObstacle) {
+						auto path = GameFunctions::PathFinding::FindPath(
+							troops[selectedTroopIndex]->getGridX(),
+							troops[selectedTroopIndex]->getGridY(),
+							gridX, gridY,
+							terrain.getObstacleGrid()
+						);
+						if (!path.empty()) {
+							troops[selectedTroopIndex]->setPath(path);
+							std::cout << "[Troop] Path set from (" << troops[selectedTroopIndex]->getGridX() << ", "
+								<< troops[selectedTroopIndex]->getGridY() << ") to ("
+								<< gridX << ", " << gridY << "), steps: " << path.size() << "\n";
+
+							// Deselect after move
+							isTroopGridSelected = false;
+							selectedTroopIndex = -1;
+							selectedTroopGridX = -1;
+							selectedTroopGridY = -1;
+							highlightX = -1;
+							highlightY = -1;
+						}
+						else {
+							//display error message if pathfinding fails
+							std::cout << "[ERROR] Pathfinding failed from (" << troops[selectedTroopIndex]->getGridX() << ", "
+								<< troops[selectedTroopIndex]->getGridY() << ") to ("
+								<< gridX << ", " << gridY << ")\n";
+						}
+					}
 				}
 				if (mouse->button == sf::Mouse::Button::Right) {
 					isTroopGridSelected = false;
@@ -359,13 +409,6 @@ int main() {
 					selectedTroopGridY = -1;
 					highlightX = -1;
 					highlightY = -1;
-				}
-				if (isTroopGridHovered && mouse->button == sf::Mouse::Button::Left) {
-					isTroopGridSelected = true;
-					highlightFade = 0.0f;
-					highlightFadeClock.restart();
-					selectedTroopGridX = hoveredTroopGridX;
-					selectedTroopGridY = hoveredTroopGridY;
 				}
 			}
 			else if (const auto* mouse = event->getIf<sf::Event::MouseButtonReleased>())
@@ -439,13 +482,17 @@ int main() {
 						}
 					}
 
-					// Grid placement
+					// troop placement on grid
 					else if (GameFunctions::GridHighlight::getHighlightGridState()) {
 
 						if (!isObstacle) {
 							if (currentPlacementMode == PlacementMode::Troop) {
 								if (!troops.empty()) {
 									troops.back()->setGridCoordinates(GameFunctions::GridHighlight::getHighlightedTileX(), GameFunctions::GridHighlight::getHighlightedTileY());
+									troops.back()->setPosition(sf::Vector2f(
+										GameFunctions::GridHighlight::getHighlightedTileX() * terrain.getTileSize() + terrain.getTileSize() / 2.0f,
+										GameFunctions::GridHighlight::getHighlightedTileY() * terrain.getTileSize() + terrain.getTileSize() / 2.0f
+									));
 
 									auto* miner = dynamic_cast<TroopEntities::Miner*>(troops.back().get());
 									if (miner) {
@@ -569,6 +616,10 @@ int main() {
 							UI::Resources::setIron(miner->getGatherRate());
 						}
 						miner->setTimer(0.0f);
+						std::cout << "[Miner] Gathered resources, current resources: "
+							<< "Wood: " << UI::Resources::getWood() << ", "
+							<< "Rock: " << UI::Resources::getRock() << ", "
+							<< "Iron: " << UI::Resources::getIron() << std::endl;
 					}
 				}
 			}
@@ -579,8 +630,19 @@ int main() {
 				oldLocations.push_back({ building->getGridX(), building->getGridY() });
 			}
 
-
-
+			for (auto& troop : troops) {
+				troop->updatePath(deltaTime, terrain.getTileSize());
+				auto* miner = dynamic_cast<TroopEntities::Miner*>(troop.get());
+				if (miner) {
+					int gridX = miner->getGridX();
+					int gridY = miner->getGridY();
+					if (gridX >= 0 && gridY >= 0 &&
+						gridX < terrain.getWidth() && gridY < terrain.getHeight()) {
+						int newResourceType = terrain.getResourceGrid()[gridX][gridY];
+						miner->setResourceType(newResourceType);
+					}
+				}
+			}
 
 			accumulator -= deltaTime;
 		}
@@ -594,13 +656,11 @@ int main() {
 		// highlight fade
 		if (isTroopGridSelected) {
 			float elapsed = highlightFadeClock.getElapsedTime().asSeconds();
-			// Oscillate between 0.55 and 0.9
 			highlightFade = 0.55f + 0.45f * std::sin(elapsed * 5.0f); // 5.0f = speed
 			if (highlightFade < 0.0f) highlightFade = 0.0f;
 			if (highlightFade > 1.0f) highlightFade = 1.0f;
 		}
 
-		//Terrain
 		sf::Color highlightColor = sf::Color(0, 255, 0, 100); //green, semi-transparent
 
 		if (isTroopGridSelected && currentPlacementMode != PlacementMode::Building) {

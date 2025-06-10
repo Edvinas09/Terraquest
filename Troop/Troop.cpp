@@ -23,13 +23,13 @@ std::unique_ptr<Troop> TroopCreator::createTroop(TroopType type, const sf::Vecto
 
     switch (type) {
     case TroopType::Melee:
-        return std::make_unique<Melee>(100, 20, 10, spawnPosition);
+        return std::make_unique<Melee>(100, 20, 100, spawnPosition);
     case TroopType::Ranged:
-        return std::make_unique<Ranged>(80, 15, 12, 5, spawnPosition);
+        return std::make_unique<Ranged>(80, 15, 100, 5, spawnPosition);
     case TroopType::Miner:
-        return std::make_unique<Miner>(60, 10, 8, 3, spawnPosition);
+        return std::make_unique<Miner>(60, 10, 100, 3, spawnPosition);
     case TroopType::Tank:
-        return std::make_unique<Tank>(200, 30, 5, 50, spawnPosition);
+        return std::make_unique<Tank>(200, 30, 50, 50, spawnPosition);
     default:
         throw std::invalid_argument("Invalid troop type");
     }
@@ -56,6 +56,22 @@ void Troop::loadTextures() {
     texturesLoaded = true;
 }
 
+void Troop::updatePath(float deltaTime, float tileSize) {
+    if (path.empty()) return;
+    sf::Vector2f target = sf::Vector2f(path.front().x * tileSize + tileSize / 2.0f, path.front().y * tileSize + tileSize / 2.0f);
+    sf::Vector2f direction = target - position;
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    float moveStep = speed * deltaTime;
+    if (distance < moveStep) {
+        setGridCoordinates(path.front().x, path.front().y);
+        position = target;
+        path.erase(path.begin());
+    }
+    else {
+        direction /= distance;
+        position += direction * moveStep;
+    }
+}
 void Troop::draw(sf::RenderWindow& window, const sf::Vector2f& position, float tilesize) {
     TroopType type;
 
